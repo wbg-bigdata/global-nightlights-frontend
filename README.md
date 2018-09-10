@@ -1,6 +1,6 @@
-# Night Lights
+# Global Night Lights
 
-The front end for the [Night Lights](nightlights.io) project.
+The global night lights frontend.
 
 ## Installation and Usage
 
@@ -25,10 +25,6 @@ Clone this repository locally and run:
 Start server with live code reload at [http://localhost:9000](http://localhost:9000):
 
     yarn start
-  
-The default API endpoint is `http://api.nightlights.io`. Set the `API_URL` environment variable to use a custom API. For example:
-
-    API_URL='http://api.custom.host:1337 yarn serve
 
 ### Build to production
 
