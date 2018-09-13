@@ -74,20 +74,6 @@ class LightMap extends React.Component {
       map.on("mousemove", this.onMouseMove);
       map.on("click", this.onClick);
 
-      map.addLayer({
-        id: 'ghana-raster-2017',
-        type: 'raster',
-        source: {
-          type: 'raster',
-          url: 'mapbox://devseed.1lnxgk7f',
-          tileSize: 256
-        },
-        paint: {
-          'raster-opacity': 0.8,
-          'raster-contrast': 0.2
-        }
-      });
-
       if (this.mapQueue.length) {
         this.mapQueue.forEach(fn => fn.call(this));
       }
