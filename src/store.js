@@ -1,18 +1,12 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
+import { routerMiddleware } from 'connected-react-router';
 import thunk from 'redux-thunk';
-import localForage from 'localforage';
 
 // Reducers and Actions
 import rootReducer from './reducers';
-import { initRegionList } from './actions/regions';
 
 import createHistory from 'history/createBrowserHistory';
 export const history = createHistory();
-
-const localStore = localForage.createInstance({
-  name: 'none'
-});
 
 export default function configureStore() {
   const initialState = {};

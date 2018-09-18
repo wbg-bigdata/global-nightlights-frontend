@@ -18,7 +18,7 @@ import registerServiceWorker from "./registerServiceWorker";
 import "./index.css";
 
 // Store
-const { store, persistor } = configureStore();
+const { store } = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>

@@ -1,4 +1,5 @@
-'use strict';
+import { max } from 'd3';
+
 const initialState = {
   loading: false,
   settlements: null
@@ -17,7 +18,22 @@ function reducer (state = initialState, { type, next }) {
 }
 
 function processSettlement (d) {
-  return d;
+  d.features.forEach(f => {
+    f.properties.data.forEach(d => {
+      d.rade9 = Number(d.rade9);
+      d.time = new Date(d.scanned_at).getTime();
+    });
+  });
+  // Calculate max
+  let lightReadings = d.features.map(f => f.properties.data.map(d => d.rade9));
+  let _max = lightReadings.reduce((compare, current) => {
+    let m = max(current);
+    return m > compare ? m : compare
+  }, 0);
+  return {
+    max: _max,
+    features: d.features
+  };
 }
 
 export default reducer;
