@@ -44,9 +44,9 @@ class LightMap extends React.Component {
     const map = window.glMap = this.map = new mgl.Map({
       container: this.refs.node,
       center: [-1.200141, 8.201226],
-      zoom: 6,
-      minZoom: 7,
-      maxZoom: 11.5,
+      zoom: 6.1,
+      minZoom: 6,
+      maxZoom: 10,
       dragRotate: false,
       attributionControl: false,
       style: 'mapbox://styles/devseed/cjlwrfhxm3uq72smqkcebecfn'
@@ -55,6 +55,26 @@ class LightMap extends React.Component {
     map.on('load', () => {
       // Interaction handlers
       map.on('click', this.onClick);
+
+      const empty = {
+        type: 'FeatureCollection',
+        features: []
+      };
+
+      map.addSource('settlements', {
+        type: 'geojson',
+        data: empty
+      });
+
+      map.addLayer({
+        id: 'highlight-settlements',
+        type: 'circle',
+        source: 'settlements',
+        paint: {
+          'circle-radius': 5,
+          'circle-color': '#EFC20D'
+        }
+      });
 
       if (this.mapQueue.length) {
         this.mapQueue.forEach(fn => fn.call(this));
@@ -66,6 +86,15 @@ class LightMap extends React.Component {
 
   componentWillUnmount() {
     this.map.remove();
+  }
+
+  componentDidUpdate (prevProps) {
+    if (this.props.settlements !== prevProps.settlements) {
+      this.map.getSource('settlements').setData({
+        type: 'FeatureCollection',
+        features: this.props.settlements.features
+      });
+    }
   }
 
   onClick ({ point }) {
@@ -122,7 +151,9 @@ class LightMap extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return { };
+  return {
+    settlements: state.settlement.settlements
+  };
 };
 
 const mapDispatchToProps = { queryCoordinates };
