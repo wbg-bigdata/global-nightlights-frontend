@@ -4,7 +4,6 @@ import { withRouter } from "react-router";
 
 // Components
 import Header from "./components/header";
-import WelcomeModal from "./components/welcome-modal";
 
 // Styles
 import "./App.css";
@@ -17,10 +16,6 @@ class App extends Component {
     return (
       <div className="App">
         <Header />
-        <WelcomeModal
-          isActive={false}
-          onClick={this.props.dismissWelcomeModal}
-        />
         <main id="site-body" role="main">
           {this.props.children}
         </main>
