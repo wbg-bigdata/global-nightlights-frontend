@@ -1,16 +1,22 @@
 // Modules
 import { connect } from 'react-redux';
 import Loading from './Loading';
+import Axis from './Axis';
 
 const d3 = require('d3');
 const React = require('react');
-/*
-const LineChart = require('../line-chart');
-*/
+const margin = {
+  top: 20,
+  right: 26,
+  bottom: 46,
+  left: 26
+};
 
-/**
- * Container view for the light curves plot.
- */
+function dateFn (tick) {
+  const d = new Date(tick);
+  return `${d.getMonth() + 1}/${d.getFullYear()}`;
+}
+
 class LightCurves extends React.Component {
   constructor (props) {
     super(props);
@@ -37,12 +43,9 @@ class LightCurves extends React.Component {
   setHeight () {
     const node = this.node.current;
     const { width, height } = node.getBoundingClientRect();
-    this.x.rangeRound([0, width]);
-    this.y.rangeRound([height, 0]);
+    this.x.rangeRound([margin.left, width - margin.right]);
+    this.y.rangeRound([height - margin.bottom, margin.top]);
     this.setState({ width, height });
-  }
-
-  componentDidUpdate () {
   }
 
   renderSvg () {
@@ -58,12 +61,26 @@ class LightCurves extends React.Component {
       .x(d => x(d.time))
       .y(d => y(d.rade9));
 
+    const x0 = x(x.domain()[0]);
     return (
       <svg width={width} height={height}>
         <g className='lines'>
           {features.map(f => (
             <path key={f.properties.id} d={line(f.properties.data)} className='line' />
           ))}
+        </g>
+        <g transform={`translate(0,${y(0)})`}>
+          <Axis orientation='horizontal'
+            scale={x}
+            domain={x.domain()}
+            labelOffset={y(y.domain()[0]) - y(0)}
+            ticks={x.ticks(5)}
+            format={dateFn}
+          />
+        </g>
+        <g className='legend' transform={`translate(${x0},${height - 18})`}>
+          <line className='line legend-line' x1='0' x2='20' y1='6' y2='6' />
+          <text x='25' y='10'>historical light output</text>
         </g>
       </svg>
     );

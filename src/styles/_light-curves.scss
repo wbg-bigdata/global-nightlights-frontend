@@ -29,7 +29,6 @@
   z-index: 100;
   color: #fff;
   overflow: hidden;
-  padding-top: 1em;
 
   transition: background-color 0.25s;
   height: 10rem;
@@ -99,10 +98,10 @@
   text {
     stroke: none;
     fill: rgba(#fff, 0.48);
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: $base-font-regular;
   }
-  .legend { 
+  .legend {
     text {
       font-size: 0.8em;
     }
@@ -178,3 +177,9 @@
   .api-url { float: left; }
 }
 
+.light-curves .placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
