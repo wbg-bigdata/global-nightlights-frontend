@@ -1,10 +1,7 @@
-import { combineReducers } from "redux";
-import context from "./context";
-import activeRegion from "./active-region";
-import regions from "./regions";
-
+import { combineReducers } from 'redux';
+import settlement from './settlement';
+import context from './context';
 export default combineReducers({
   context,
-  activeRegion,
-  regions
+  settlement
 });

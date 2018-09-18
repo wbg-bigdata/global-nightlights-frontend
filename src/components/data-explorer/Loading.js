@@ -19,7 +19,7 @@ class Loading extends React.Component {
 
 Loading.propTypes = {
   message: t.string,
-  errors: t.array.isRequired
+  errors: t.array
 };
 
 module.exports = Loading;

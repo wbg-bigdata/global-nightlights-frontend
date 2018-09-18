@@ -2,7 +2,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
 import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
 
 // App
@@ -19,25 +18,23 @@ import registerServiceWorker from "./registerServiceWorker";
 import "./index.css";
 
 // Store
-const { store, persistor } = configureStore();
+const { store } = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
-      <HashRouter>
-        <App>
-          <Switch>
-            <Route
-              exact
-              name="nation"
-              path="/explore"
-              component={DataExplorer}
-            />
-            <Redirect from="/" to="/explore" />
-          </Switch>
-        </App>
-      </HashRouter>
-    </PersistGate>
+    <HashRouter>
+      <App>
+        <Switch>
+          <Route
+            exact
+            name="nation"
+            path="/explore"
+            component={DataExplorer}
+          />
+          <Redirect from="/" to="/explore" />
+        </Switch>
+      </App>
+    </HashRouter>
   </Provider>,
   document.getElementById("root")
 );
