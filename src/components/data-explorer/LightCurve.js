@@ -59,7 +59,7 @@ class LightCurves extends React.Component {
 
     const line = d3.line()
       .x(d => x(d.time))
-      .y(d => y(d.rade9));
+      .y(d => y(d.movingAverage));
 
     const x0 = x(x.domain()[0]);
     return (
