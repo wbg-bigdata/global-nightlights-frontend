@@ -15,7 +15,7 @@ class About extends React.Component {
           <div className='inner'>
             <div className='prose'>
               <p>Global Night Lights is a collaboration between Development Seed, the World Bank, the University of Michigan, and NOAA.</p>
-              <p>This project is an update to <a target='_blank' href='http://nightlights.io/'>India Night Lights</a>.</p>
+              <p>This project is an update to <a target='_blank' rel='noopener noreferrer' href='http://nightlights.io/'>India Night Lights</a>.</p>
               <h2><a href='https://wbg-bigdata.github.io/global-nightlights-api/api/'>Get the Data</a></h2>
               <p>The data from this platform is open-source. It can be accessed from the <a href='https://wbg-bigdata.github.io/global-nightlights-api/api/'>Global Night Lights API</a>.</p>
               <p>Email <a href='mailto:brianmin@umich.edu'>brianmin@umich.edu</a> or <a href='mailto:kgaba@worldbank.org'>kgaba@worldbank.org</a> with questions.</p>
