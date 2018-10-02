@@ -1,4 +1,5 @@
 import { max } from 'd3';
+import movingAverage from '../lib/moving-average';
 
 const initialState = {
   loading: false,
@@ -25,7 +26,13 @@ function processSettlement (d) {
     });
   });
   // Calculate max
-  let lightReadings = d.features.map(f => f.properties.data.map(d => d.rade9));
+  const accessor = (d) => d.rade9;
+  // Attach moving average
+  d.features.forEach(d => {
+    movingAverage(d.properties.data, accessor);
+  });
+
+  let lightReadings = d.features.map(f => f.properties.data.map(d => d.movingAverage));
   let _max = lightReadings.reduce((compare, current) => {
     let m = max(current);
     return m > compare ? m : compare
