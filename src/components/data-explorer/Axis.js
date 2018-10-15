@@ -48,6 +48,7 @@ class Axis extends React.Component {
             x={orientation === 'vertical' ? labelOffset - 5 : scale(tick)}
             y={orientation === 'vertical' ? scale(tick) : labelOffset }
             dy={orientation === 'vertical' ? 0 : '1em'}
+            dx={orientation === 'vertical' ? '-5px' : 0}
             textAnchor={orientation === 'vertical' ? 'end' : 'middle'} >
 
             {format(tick)}

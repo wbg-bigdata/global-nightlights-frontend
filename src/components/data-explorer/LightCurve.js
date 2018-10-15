@@ -9,12 +9,16 @@ const margin = {
   top: 20,
   right: 26,
   bottom: 46,
-  left: 26
+  left: 50
 };
 
 function dateFn (tick) {
   const d = new Date(tick);
   return `${d.getMonth() + 1}/${d.getFullYear()}`;
+}
+
+function yFormatFn (tick) {
+  return (+tick).toFixed(1);
 }
 
 class LightCurves extends React.Component {
@@ -69,6 +73,16 @@ class LightCurves extends React.Component {
             <path key={f.properties.id} d={line(f.properties.data)} className='line' />
           ))}
         </g>
+
+        <g transform={`translate(${x(x.domain()[0])},0)`}>
+          <Axis orientation='vertical'
+            scale={y}
+            domain={y.domain()}
+            ticks={y.ticks(5)}
+            format={yFormatFn}
+          />
+        </g>
+
         <g transform={`translate(0,${y(0)})`}>
           <Axis orientation='horizontal'
             scale={x}
