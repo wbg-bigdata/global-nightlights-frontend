@@ -1,4 +1,4 @@
-const movingAverageWindow = 3;
+const movingAverageWindow = 30;
 /**
  * Computes a moving average of series arr.map(accesor) and attaches it
  * as arr[...][property]
