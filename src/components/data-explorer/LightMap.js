@@ -14,6 +14,17 @@ import { queryCoordinates } from '../../actions';
 import Modal from '../modal';
 import Loading from './Loading';
 
+const initialCountry = 'ghana';
+const countries = ['ghana', 'kenya'];
+const locations = {
+  ghana: [-1.200141, 8.201226],
+  kenya: [37.842151, 0.253297]
+};
+
+function displayCase (s) {
+  return s.charAt(0).toUpperCase() + s.slice(1, s.length);
+}
+
 // Styles: MapboxGL CSS is conflicting with current app styles, leaving comented for now
 // import 'mapbox-gl/dist/mapbox-gl.css';
 mgl.accessToken = config.mapboxAccessToken;
@@ -23,13 +34,15 @@ class LightMap extends React.Component {
     super(props);
 
     this.state = {
-      loaded: false
+      loaded: false,
+      country: initialCountry
     };
 
     this.mapQueue = [];
 
     // Bindings
     this.callOnMap = this.callOnMap.bind(this);
+    this.setMapLoc = this.setMapLoc.bind(this);
     this.onClick = this.onClick.bind(this);
   }
 
@@ -102,12 +115,22 @@ class LightMap extends React.Component {
     this.props.queryCoordinates([coords.lng, coords.lat]);
   }
 
-  callOnMap(fn) {
+  callOnMap (fn) {
     if (this.state.loaded) {
       fn.call(this);
     } else {
       this.mapQueue.push(fn);
     }
+  }
+
+  setMapLoc (e) {
+    const id = e.currentTarget.getAttribute('data-id');
+    this.setState({country: id});
+    this.callOnMap(() => {
+      this.map.flyTo({
+        center: locations[id]
+      })
+    })
   }
 
   render() {
@@ -145,6 +168,14 @@ class LightMap extends React.Component {
       <div className={cn}>
         {loading ? <Loading /> : ''}
         <div className='map-inner' ref='node' />
+        <div className='map-location-select-wrap'>
+          <ul className='map-location-select'>
+            {countries.map(c => (
+              <li data-id={c} onClick={this.setMapLoc}
+                className={classnames('map-location', {'map-location-active': this.state.country === c})}>{displayCase(c)}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     );
   }

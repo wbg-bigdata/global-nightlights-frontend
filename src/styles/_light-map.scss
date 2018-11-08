@@ -18,8 +18,8 @@
 
   // side-by-side layout
   .compare & { width: 50%; }
-  .compare & + & { 
-    left: 50%; 
+  .compare & + & {
+    left: 50%;
     border-left: 1px solid #484848;
     .legend {
       display: none;
@@ -52,12 +52,12 @@
   .mapboxgl-ctrl-group {
     background: rgba(#fff, 0.2);
   }
-  .mapboxgl-ctrl-icon.mapboxgl-ctrl-zoom-in { 
+  .mapboxgl-ctrl-icon.mapboxgl-ctrl-zoom-in {
     background-image: none;
     border-bottom-color: rgba(#fff, .1);
     &:before { @extend .icon-s-add; }
   }
-  .mapboxgl-ctrl-icon.mapboxgl-ctrl-zoom-out { 
+  .mapboxgl-ctrl-icon.mapboxgl-ctrl-zoom-out {
     background-image: none;
     border-bottom: 0;
     &:after { @extend .icon-s-subtract; }
@@ -71,4 +71,24 @@
 .mapboxgl-ctrl-attrib {
   background: transparent;
   opacity: 0.32;
+}
+
+.map-location-select-wrap {
+  background: #361919;
+  background: rgba(0, 0, 0, 0.65);
+  top: 6rem;
+  position: absolute;
+  z-index: 99;
+  padding: 0.5rem 2rem;
+}
+
+.map-location {
+  cursor: pointer;
+  margin: 0.25rem 0;
+  &:hover {
+    text-decoration: underline;
+  }
+  &.map-location-active {
+    text-decoration: underline;
+  }
 }
