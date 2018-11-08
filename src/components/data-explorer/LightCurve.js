@@ -58,6 +58,7 @@ class LightCurves extends React.Component {
     const { x, y } = this;
 
     const { data } = features[0].properties;
+    if (!data.length) return null
     x.domain([data[0].time, data[data.length - 1].time]);
     y.domain([0, max]);
 
