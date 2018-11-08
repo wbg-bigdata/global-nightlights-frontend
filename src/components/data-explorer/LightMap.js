@@ -46,7 +46,7 @@ class LightMap extends React.Component {
       center: [-1.200141, 8.201226],
       zoom: 6.1,
       minZoom: 6,
-      maxZoom: 10,
+      maxZoom: 15,
       dragRotate: false,
       attributionControl: false,
       style: 'mapbox://styles/devseed/cjlwrfhxm3uq72smqkcebecfn'
