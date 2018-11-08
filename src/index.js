@@ -16,7 +16,7 @@ import configureStore from './store';
 import registerServiceWorker from './registerServiceWorker';
 
 // Styles
-import './index.css';
+import './styles/index.css';
 
 // Store
 const { store } = configureStore();
