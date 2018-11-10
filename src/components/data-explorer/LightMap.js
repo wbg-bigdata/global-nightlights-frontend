@@ -62,7 +62,7 @@ class LightMap extends React.Component {
       maxZoom: 15,
       dragRotate: false,
       attributionControl: false,
-      style: 'mapbox://styles/devseed/cjlwrfhxm3uq72smqkcebecfn'
+      style: 'mapbox://styles/devseed/cjoarsdgq1l1u2smn1rrrwo4u'
     });
 
     map.on('load', () => {
