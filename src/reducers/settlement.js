@@ -19,7 +19,11 @@ function reducer (state = initialState, { type, next }) {
 }
 
 function processSettlement (d) {
-  d.features.forEach(f => {
+  // Only render the first feature that has a populated data array
+  let features = d.features.filter(d => d.properties.data.length)
+  features = features.length ? features.slice(0, 1) : d.features[0]
+
+  features.forEach(f => {
     f.properties.data.forEach(d => {
       d.rade9 = Number(d.rade9);
       d.time = new Date(d.scanned_at).getTime();
@@ -28,18 +32,18 @@ function processSettlement (d) {
   // Calculate max
   const accessor = (d) => d.rade9;
   // Attach moving average
-  d.features.forEach(d => {
+  features.forEach(d => {
     movingAverage(d.properties.data, accessor);
   });
 
-  let lightReadings = d.features.map(f => f.properties.data.map(d => d.movingAverage));
+  let lightReadings = features.map(f => f.properties.data.map(d => d.movingAverage));
   let _max = lightReadings.reduce((compare, current) => {
     let m = max(current);
     return m > compare ? m : compare
   }, 0);
   return {
     max: _max,
-    features: d.features
+    features: features
   };
 }
 
