@@ -76,10 +76,16 @@
 .map-location-select-wrap {
   background: #361919;
   background: rgba(0, 0, 0, 0.65);
+  display: none;
+  max-width: 220px;
   top: 6rem;
   position: absolute;
   z-index: 99;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem 2rem 1rem;
+
+  @include media(medium-up) {
+    display: block;
+  }
 }
 
 .map-location {
@@ -91,4 +97,33 @@
   &.map-location-active {
     text-decoration: underline;
   }
+}
+
+.map-legend {
+  font-size: 0.9em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.legend-item {
+  margin-left: 14px;
+  position: relative;
+  &:after {
+    position: absolute;
+    content: '';
+
+    width: 8px;
+    height: 8px;
+    display: block;
+    left: -14px;
+    top: 7px;
+  }
+}
+
+.legend-item-red { &:after { background-color: red; } }
+.legend-item-green { &:after { background-color: green; } }
+.legend-item-grad { &:after { background-color: white; } }
+
+.map-sources {
+  font-size: 0.75em;
 }

@@ -175,6 +175,12 @@ class LightMap extends React.Component {
                 className={classnames('map-location', {'map-location-active': this.state.country === c})}>{displayCase(c)}</li>
             ))}
           </ul>
+          <ul className='map-legend'>
+            <li className='legend-item legend-item-green'>Electrified settlement</li>
+            <li className='legend-item legend-item-red'>Unelectrified settlement</li>
+            <li className='legend-item legend-item-grad'>Average light output</li>
+          </ul>
+          <p className='map-sources'>Sources: NOAA VIIRS DNB, CIESIN/Facebook HRSL</p>
         </div>
       </div>
     );
