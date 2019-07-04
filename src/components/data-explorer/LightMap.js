@@ -8,22 +8,11 @@ import mgl from "mapbox-gl";
 import config from "../../config";
 
 // Actions
-import { queryCoordinates } from "../../actions";
+import { queryCoordinates, queryCountries } from "../../actions";
 
 // Components
 import Modal from "../modal";
 import Loading from "./Loading";
-
-const initialCountry = "ghana";
-const countries = ["ghana", "kenya"];
-const locations = {
-  ghana: [-1.200141, 8.201226],
-  kenya: [37.842151, 0.253297]
-};
-
-function displayCase(s) {
-  return s.charAt(0).toUpperCase() + s.slice(1, s.length);
-}
 
 // Styles: MapboxGL CSS is conflicting with current app styles, leaving comented for now
 // import 'mapbox-gl/dist/mapbox-gl.css';
@@ -35,14 +24,14 @@ class LightMap extends React.Component {
 
     this.state = {
       loaded: false,
-      country: initialCountry
+      activeCountry: null
     };
 
     this.mapQueue = [];
 
     // Bindings
     this.callOnMap = this.callOnMap.bind(this);
-    this.setMapLoc = this.setMapLoc.bind(this);
+    this.changeCountry = this.changeCountry.bind(this);
     this.onClick = this.onClick.bind(this);
   }
 
@@ -97,6 +86,10 @@ class LightMap extends React.Component {
     });
   }
 
+  componentWillMount() {
+    this.props.queryCountries();
+  }
+
   componentWillUnmount() {
     this.map.remove();
   }
@@ -108,7 +101,14 @@ class LightMap extends React.Component {
         features: this.props.settlements.features
       });
     }
-  }
+
+    // Initialize activeCountry when country list is fetched
+    const { activeCountry } = this.state;
+    const { countries } = this.props;
+    if (!activeCountry && countries.length > 0) {
+      this.changeCountry(countries[0].id);
+    }
+  }  
 
   onClick({ point }) {
     const coords = this.map.unproject(point);
@@ -123,17 +123,20 @@ class LightMap extends React.Component {
     }
   }
 
-  setMapLoc(e) {
-    const id = e.currentTarget.getAttribute("data-id");
-    this.setState({ country: id });
+  changeCountry(id) {
+    const country = this.props.countries.find(c => c.id === id);
     this.callOnMap(() => {
-      this.map.flyTo({
-        center: locations[id]
-      });
+      this.map.fitBounds(country.bounds);
     });
+    this.setState({ activeCountry: id });
   }
 
   render() {
+    const { loadingCountries, countries } = this.props;
+    const { activeCountry } = this.state;
+
+    let loading = !this.state.loaded;
+
     const cn = classnames("light-map", {
       ["light-map_" + this.props.compareMode]: this.props.compareMode
     });
@@ -163,24 +166,28 @@ class LightMap extends React.Component {
       );
     }
 
-    let loading = !this.state.loaded;
     return (
       <div className={cn}>
         {loading ? <Loading /> : ""}
         <div className="map-inner" ref="node" />
         <div className="map-location-select-wrap">
           <ul className="map-location-select">
-            {countries.map(c => (
-              <li
-                data-id={c}
-                onClick={this.setMapLoc}
-                className={classnames("map-location", {
-                  "map-location-active": this.state.country === c
-                })}
-              >
-                {displayCase(c)}
-              </li>
-            ))}
+            {loadingCountries ? (
+              <li>Loading countries...</li>
+            ) : (
+              countries.map(c => (
+                <li
+                  key={c.id}
+                  data-id={c.id}
+                  onClick={e => this.changeCountry(e.currentTarget.dataset.id)}
+                  className={classnames("map-location", {
+                    "map-location-active": activeCountry === c.id
+                  })}
+                >
+                  {c.name}
+                </li>
+              ))
+            )}
           </ul>
           <ul className="map-legend">
             <li className="legend-item legend-item-green">
@@ -203,12 +210,16 @@ class LightMap extends React.Component {
 }
 
 const mapStateToProps = state => {
+  const { loading: loadingCountries, data: countries } = state.countries;
+  const { settlements } = state.settlement;
   return {
-    settlements: state.settlement.settlements
+    loadingCountries,
+    countries,
+    settlements
   };
 };
 
-const mapDispatchToProps = { queryCoordinates };
+const mapDispatchToProps = { queryCoordinates, queryCountries };
 
 export default withRouter(
   connect(
