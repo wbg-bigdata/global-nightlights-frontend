@@ -6,19 +6,30 @@ The global night lights frontend.
 
 The steps below will walk you through setting up a development environment for the frontend.
 
-### Prerequisites
-
-To set up the development environment for this website, you'll need to install the following on your system:
-
-- [Git](https://git-scm.com)
-- [Node.js](http://nodejs.org), version 8 or later
-- [Yarn](https://yarnpkg.com)
-
 ### Install dependencies
 
-Clone this repository locally and run:
+Install the following on your system:
 
-    yarn
+- [Git](https://git-scm.com)
+- [nvm](https://github.com/creationix/nvm)
+
+Clone this repository locally and activate required Node.js version:
+
+```
+nvm install
+```
+
+Install yarn:
+
+```
+npm install -g yarn
+```
+
+Install Node.js dependencies:
+
+```
+yarn install
+```
 
 ### Development
 
