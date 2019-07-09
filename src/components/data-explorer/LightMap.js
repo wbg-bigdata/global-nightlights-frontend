@@ -1,29 +1,18 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import classnames from 'classnames';
-import mgl from 'mapbox-gl';
+import React from "react";
+import { connect } from "react-redux";
+import { withRouter } from "react-router";
+import classnames from "classnames";
+import mgl from "mapbox-gl";
 
 // Config
-import config from '../../config';
+import config from "../../config";
 
 // Actions
-import { queryCoordinates } from '../../actions';
+import { queryCoordinates, queryCountries } from "../../actions";
 
 // Components
-import Modal from '../modal';
-import Loading from './Loading';
-
-const initialCountry = 'ghana';
-const countries = ['ghana', 'kenya'];
-const locations = {
-  ghana: [-1.200141, 8.201226],
-  kenya: [37.842151, 0.253297]
-};
-
-function displayCase (s) {
-  return s.charAt(0).toUpperCase() + s.slice(1, s.length);
-}
+import Modal from "../modal";
+import Loading from "./Loading";
 
 // Styles: MapboxGL CSS is conflicting with current app styles, leaving comented for now
 // import 'mapbox-gl/dist/mapbox-gl.css';
@@ -35,14 +24,14 @@ class LightMap extends React.Component {
 
     this.state = {
       loaded: false,
-      country: initialCountry
+      activeCountry: null
     };
 
     this.mapQueue = [];
 
     // Bindings
     this.callOnMap = this.callOnMap.bind(this);
-    this.setMapLoc = this.setMapLoc.bind(this);
+    this.changeCountry = this.changeCountry.bind(this);
     this.onClick = this.onClick.bind(this);
   }
 
@@ -50,42 +39,41 @@ class LightMap extends React.Component {
     // check for GL support
     if (!mgl.supported({ failIfMajorPerformanceCaveat: true })) {
       this.setState({ unsupported: true });
-      console.log('mapbox gl unsupported');
+      console.log("mapbox gl unsupported");
       return;
     }
 
-    const map = window.glMap = this.map = new mgl.Map({
+    const map = (window.glMap = this.map = new mgl.Map({
       container: this.refs.node,
-      center: [-1.200141, 8.201226],
-      zoom: 6.1,
-      minZoom: 6,
+      center: [0, 0],
+      zoom: 1,
       maxZoom: 15,
       dragRotate: false,
       attributionControl: false,
-      style: 'mapbox://styles/devseed/cjoarsdgq1l1u2smn1rrrwo4u'
-    });
+      style: "mapbox://styles/devseed/cjoarsdgq1l1u2smn1rrrwo4u"
+    }));
 
-    map.on('load', () => {
+    map.on("load", () => {
       // Interaction handlers
-      map.on('click', this.onClick);
+      map.on("click", this.onClick);
 
       const empty = {
-        type: 'FeatureCollection',
+        type: "FeatureCollection",
         features: []
       };
 
-      map.addSource('settlements', {
-        type: 'geojson',
+      map.addSource("settlements", {
+        type: "geojson",
         data: empty
       });
 
       map.addLayer({
-        id: 'highlight-settlements',
-        type: 'circle',
-        source: 'settlements',
+        id: "highlight-settlements",
+        type: "circle",
+        source: "settlements",
         paint: {
-          'circle-radius': 5,
-          'circle-color': '#EFC20D'
+          "circle-radius": 5,
+          "circle-color": "#EFC20D"
         }
       });
 
@@ -97,25 +85,36 @@ class LightMap extends React.Component {
     });
   }
 
+  componentWillMount() {
+    this.props.queryCountries();
+  }
+
   componentWillUnmount() {
     this.map.remove();
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     if (this.props.settlements !== prevProps.settlements) {
-      this.map.getSource('settlements').setData({
-        type: 'FeatureCollection',
+      this.map.getSource("settlements").setData({
+        type: "FeatureCollection",
         features: this.props.settlements.features
       });
     }
+
+    // Initialize activeCountry when country list is fetched
+    const { activeCountry } = this.state;
+    const { countries } = this.props;
+    if (!activeCountry && countries.length > 0) {
+      this.changeCountry(countries[0].id);
+    }
   }
 
-  onClick ({ point }) {
+  onClick({ point }) {
     const coords = this.map.unproject(point);
     this.props.queryCoordinates([coords.lng, coords.lat]);
   }
 
-  callOnMap (fn) {
+  callOnMap(fn) {
     if (this.state.loaded) {
       fn.call(this);
     } else {
@@ -123,19 +122,25 @@ class LightMap extends React.Component {
     }
   }
 
-  setMapLoc (e) {
-    const id = e.currentTarget.getAttribute('data-id');
-    this.setState({country: id});
+  changeCountry(id) {
+    const country = this.props.countries.find(c => c.id === id);
     this.callOnMap(() => {
-      this.map.flyTo({
-        center: locations[id]
-      })
-    })
+      this.map.fitBounds(country.bounds, {
+        padding: { top: 100, bottom: 200, left: 0, right: 0 },
+        linear: true
+      });
+    });
+    this.setState({ activeCountry: id });
   }
 
   render() {
-    const cn = classnames('light-map', {
-      ['light-map_' + this.props.compareMode]: this.props.compareMode
+    const { loadingCountries, countries } = this.props;
+    const { activeCountry } = this.state;
+
+    let loading = !this.state.loaded;
+
+    const cn = classnames("light-map", {
+      ["light-map_" + this.props.compareMode]: this.props.compareMode
     });
 
     if (this.state.unsupported) {
@@ -150,8 +155,8 @@ class LightMap extends React.Component {
                 <p>
                   The visualizations on this site require a browser with WebGL
                   rendering capabilities. Please try viewing it with a newer
-                  version of <a href='http://www.google.com/chrome/'>Chrome</a>,{' '}
-                  <a href='https://www.mozilla.org/en-US/firefox/new/'>
+                  version of <a href="http://www.google.com/chrome/">Chrome</a>,{" "}
+                  <a href="https://www.mozilla.org/en-US/firefox/new/">
                     Firefox
                   </a>
                   , or Safari.
@@ -163,24 +168,43 @@ class LightMap extends React.Component {
       );
     }
 
-    let loading = !this.state.loaded;
     return (
       <div className={cn}>
-        {loading ? <Loading /> : ''}
-        <div className='map-inner' ref='node' />
-        <div className='map-location-select-wrap'>
-          <ul className='map-location-select'>
-            {countries.map(c => (
-              <li data-id={c} onClick={this.setMapLoc}
-                className={classnames('map-location', {'map-location-active': this.state.country === c})}>{displayCase(c)}</li>
-            ))}
+        {loading ? <Loading /> : ""}
+        <div className="map-inner" ref="node" />
+        <div className="map-location-select-wrap">
+          <ul className="map-location-select">
+            {loadingCountries ? (
+              <li>Loading countries...</li>
+            ) : (
+              countries.map(c => (
+                <li
+                  key={c.id}
+                  data-id={c.id}
+                  onClick={e => this.changeCountry(e.currentTarget.dataset.id)}
+                  className={classnames("map-location", {
+                    "map-location-active": activeCountry === c.id
+                  })}
+                >
+                  {c.name}
+                </li>
+              ))
+            )}
           </ul>
-          <ul className='map-legend'>
-            <li className='legend-item legend-item-green'>Electrified settlement</li>
-            <li className='legend-item legend-item-red'>Unelectrified settlement</li>
-            <li className='legend-item legend-item-grad'>Average light output</li>
+          <ul className="map-legend">
+            <li className="legend-item legend-item-green">
+              Electrified settlement
+            </li>
+            <li className="legend-item legend-item-red">
+              Unelectrified settlement
+            </li>
+            <li className="legend-item legend-item-grad">
+              Average light output
+            </li>
           </ul>
-          <p className='map-sources'>Sources: NOAA VIIRS DNB, CIESIN/Facebook HRSL</p>
+          <p className="map-sources">
+            Sources: NOAA VIIRS DNB, CIESIN/Facebook HRSL
+          </p>
         </div>
       </div>
     );
@@ -188,12 +212,16 @@ class LightMap extends React.Component {
 }
 
 const mapStateToProps = state => {
+  const { loading: loadingCountries, data: countries } = state.countries;
+  const { settlements } = state.settlement;
   return {
-    settlements: state.settlement.settlements
+    loadingCountries,
+    countries,
+    settlements
   };
 };
 
-const mapDispatchToProps = { queryCoordinates };
+const mapDispatchToProps = { queryCoordinates, queryCountries };
 
 export default withRouter(
   connect(
