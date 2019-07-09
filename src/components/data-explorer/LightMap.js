@@ -47,7 +47,6 @@ class LightMap extends React.Component {
       container: this.refs.node,
       center: [-1.200141, 8.201226],
       zoom: 6.1,
-      minZoom: 6,
       maxZoom: 15,
       dragRotate: false,
       attributionControl: false,
@@ -108,7 +107,7 @@ class LightMap extends React.Component {
     if (!activeCountry && countries.length > 0) {
       this.changeCountry(countries[0].id);
     }
-  }  
+  }
 
   onClick({ point }) {
     const coords = this.map.unproject(point);
@@ -126,7 +125,10 @@ class LightMap extends React.Component {
   changeCountry(id) {
     const country = this.props.countries.find(c => c.id === id);
     this.callOnMap(() => {
-      this.map.fitBounds(country.bounds);
+      this.map.fitBounds(country.bounds, {
+        padding: { top: 100, bottom: 200, left: 0, right: 0 },
+        linear: true
+      });
     });
     this.setState({ activeCountry: id });
   }
