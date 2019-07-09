@@ -45,8 +45,8 @@ class LightMap extends React.Component {
 
     const map = (window.glMap = this.map = new mgl.Map({
       container: this.refs.node,
-      center: [-1.200141, 8.201226],
-      zoom: 6.1,
+      center: [0, 0],
+      zoom: 1,
       maxZoom: 15,
       dragRotate: false,
       attributionControl: false,
