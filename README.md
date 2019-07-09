@@ -37,9 +37,12 @@ Start server with live code reload at [http://localhost:9000](http://localhost:9
 
     yarn start
 
-### Build to production
+### Deploy
 
 Generate a minified build to `dist` folder:
 
     yarn build
 
+Deploy to Github Pages:
+
+    yarn deploy
