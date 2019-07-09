@@ -88,6 +88,11 @@
   }
 }
 
+.map-location-select {
+  overflow: auto;
+  height: 150px;
+}
+
 .map-location {
   cursor: pointer;
   margin: 0.25rem 0;
